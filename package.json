@@ -1,0 +1,27 @@
+{
+    "name": "backend-server",
+    "version": "1.0.0",
+    "description": "servidor backend de la aplicación de la bolsa de empleo",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon app.js",
+        "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tefajarita/server-backend.git"
+    },
+    "keywords": [
+        "bolsa"
+    ],
+    "author": "Estefania Jaramillo",
+    "license": "ISC",
+    "homepage": "https://github.com/tefajarita/server-backend",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.18.2",
+        "express": "^4.16.3",
+        "mongoose": "^5.0.17",
+        "mongoose-unique-validator": "^2.0.1"
+    }
+}
