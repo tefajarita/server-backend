@@ -17,10 +17,10 @@ var Usuario = require('../models/usuario');
 app.get('/', (req, res, next) => {
     let desde = req.query.desde || 0;
     desde = Number(desde);
-
+    let estado = true;
     let limite = req.query.limite || 5;
     limite = Number(limite);
-    Usuario.find({}, 'nombre email google img estado role')
+    Usuario.find({ estado: true }, 'nombre email google img estado role')
         .skip(desde)
         .limit(5)
         .exec(
@@ -33,7 +33,7 @@ app.get('/', (req, res, next) => {
                     });
                 }
 
-                Usuario.count({}, (err, conteo) => {
+                Usuario.count({ estado: true }, (err, conteo) => {
                     return res.status(200).json({
                         ok: true,
                         usuarios,
@@ -121,8 +121,11 @@ app.put('/:id', (req, res) => {
 
 app.delete('/:id', function(req, res) {
     let id = req.params.id;
-
-    Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
+    let cambiaEstado = {
+        estado: false
+    };
+    //Usuario.findByIdAndRemove(id,(err,UsuarioBorrado))
+    Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -143,6 +146,9 @@ app.delete('/:id', function(req, res) {
             ok: true,
             usuario: usuarioBorrado
         });
+
+
+
 
     });
 });

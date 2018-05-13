@@ -10,7 +10,7 @@ const app = express();
 const bodyParser = require('body-parser')
 
 //Conexion a la base de datos 
-mongoose.connection.openUri('mongodb://localhost:27017/BolsaEmpleoDb', (err, res) => {
+mongoose.connection.openUri(process.env.URLDB, (err, res) => {
 
     if (err) throw err;
     console.log('La base de datos esta conectada exitosamente: \x1b[32m%s\x1b[0m', 'conectada');
