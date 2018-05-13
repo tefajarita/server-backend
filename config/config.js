@@ -25,7 +25,7 @@ let urlDB;
 if (process.env.NODE_ENV === 'dev') {
     urlDB = 'mongodb://localhost:27017/bolsaempleo';
 } else {
-    urlDB = 'mongodb://bolsa-user:123456@ds147070.mlab.com:47070/bolsaempleo';
+    urlDB = process.env.MONGO_URI;
 }
 
 process.env.URLDB = urlDB;
