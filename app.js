@@ -3,11 +3,11 @@
 const config = require('./config/config');
 
 //Requires
-var express = require('express');
-var mongoose = require('mongoose');
+const express = require('express');
+const mongoose = require('mongoose');
 //Inicializar variables
 const app = express();
-var bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
 
 //Conexion a la base de datos 
 mongoose.connection.openUri('mongodb://localhost:27017/BolsaEmpleoDb', (err, res) => {
@@ -23,9 +23,9 @@ app.use(bodyParser.json());
 
 
 // Importar Rutas 
-var usuarioRoutes = require('./routes/usuario');
-var loginRoutes = require('./routes/login');
-var appRoutes = require('./routes/app');
+const usuarioRoutes = require('./routes/usuario');
+const loginRoutes = require('./routes/login');
+const appRoutes = require('./routes/app');
 
 //Ruta
 app.use('/usuario', usuarioRoutes);
