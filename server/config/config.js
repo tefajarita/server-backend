@@ -33,4 +33,6 @@ if (process.env.NODE_ENV === 'dev') {
     urlDB = process.env.MONGO_URI;
 }
 
+console.log(process.env.NODE_ENV);
+
 process.env.URLDB = urlDB;

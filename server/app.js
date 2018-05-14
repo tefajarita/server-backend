@@ -5,6 +5,8 @@ const config = require('./config/config');
 //Requires
 const express = require('express');
 const mongoose = require('mongoose');
+//importacion de path
+const path = require('path');
 //Inicializar variables
 const app = express();
 const bodyParser = require('body-parser')
@@ -20,6 +22,9 @@ mongoose.connection.openUri(process.env.URLDB, (err, res) => {
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+//habilitar la carpeta public 
+app.use(express.static(path.resolve(__dirname, '../public')));
 
 //configuracion global de rutas
 app.use(require('./routes/index'));
