@@ -66,6 +66,15 @@ let verificarEmpresaRole = (req, res, next) => {
 
 };
 
+let verificarTokenUrl = (req, res, next) => {
+    let token = req.query.token;
+
+    res.json({
+        token
+    })
+
+
+};
 module.exports = {
     verificaToken,
     verificarAdminRole,
