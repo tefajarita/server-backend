@@ -49,7 +49,26 @@ let verificarAdminRole = (req, res, next) => {
 };
 
 
+let verificarEmpresaRole = (req, res, next) => {
+    let usuario = req.usuario.Usuario;
+
+    if (usuario.role === 'EMPLOYEER_ROLE' || usuario.role === 'ADMIN_ROLE') {
+        next();
+    } else {
+
+        return res.json({
+            ok: false,
+            err: {
+                message: 'El usuario no es empresa'
+            }
+        });
+    }
+
+};
+
 module.exports = {
     verificaToken,
-    verificarAdminRole
+    verificarAdminRole,
+    verificarEmpresaRole
+
 }

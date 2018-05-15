@@ -17,6 +17,12 @@ let ofertaShema = new Schema({
     tipoContrato: { type: String, default: 'Obra Labor' },
     fechaContrato: { type: Date, required: true },
     cantidadVacantes: { type: Number, required: [true, 'Es necesario el número de vacantes'] },
+    educacionMinima: { type: String, default: 'Educación primaria', required: false },
+    aniosExpercia: { type: Number, required: false },
+    edad: { type: String, required: false },
+    disponibilidadViajar: { type: Boolean, default: false },
+    disponibilidadCambioResidencia: { type: Boolean, required: false, default: false },
+    activada: { type: Boolean, default: true },
     LugarTrabajo: { type: Schema.Types.ObjectId, ref: 'Departamento' },
     empresa: { type: Schema.Types.ObjectId, ref: 'Empresa' }
 }, { collection: 'ofertas' });
