@@ -1,29 +1,39 @@
 //Requires
-var express = require('express');
-
+const express = require('express');
+const NodeGeocoder = require('node-geocoder');
+//const jwt = require('jsonwebtoken');
 //Validaciones addicionales
 
-const _ = require('underscore');
 //Inicializar variables
 var app = express();
 //importacion del modelo 
 var Empresa = require('../models/empresa');
+var Ciudad = require('../models/ciudad');
+//opciones para obtener la localizacion del cliente
 
+let options = {
+    provider: 'google',
+    httpAdapter: 'https',
+    apiKey: 'AIzaSyCGfZcDBLgzEQRgeO68Mr3euM2lz_1w9gg',
+    formatter: null
+}
+
+let geocoder = NodeGeocoder(options);
 //middlewares
-const { verificaToken, verificarEmpresaRole } = require('../middlewares/autenticacion');
+const { verificaToken, verificarAdminRole, verificarEmpresaRole } = require('../middlewares/autenticacion');
 //Rutas 
 
 //==========================
 //Obtener todos los Empresas||
 //==========================
-app.get('/', verificaToken, (req, res) => {
+app.get('/', (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
     let estado = true;
     let limite = req.query.limite || 5;
     limite = Number(limite);
-    Empresa.find({ estado: true }, 'nombre email google img estado role')
+    Empresa.find({ estado: true }, )
         .skip(desde)
         .limit(5)
         .exec(
@@ -51,38 +61,110 @@ app.get('/', verificaToken, (req, res) => {
 
 });
 
+// ==========================================
+//  Obtener Empresa por ID
+// ==========================================
+app.get('/:id', (req, res) => {
+
+    var id = req.params.id;
+
+    Hospital.findById(id)
+        .populate('usuario', 'nombre img email')
+        .exec((err, empresa) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error al buscar empresa',
+                    errors: err
+                });
+            }
+
+            if (!empresa) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'la empresa con el id ' + id + 'no existe',
+                    errors: { message: 'No existe un empresa con ese ID' }
+                });
+            }
+            res.status(200).json({
+                ok: true,
+                empresa: empresa
+            });
+        })
+})
+
+
 //==========================
 //Crear Empresa             ||
 //==========================
 
-app.post('/', [verificaToken, verificarEmpresaRole], (req, res) => {
+app.post('/', [verificaToken], (req, res) => {
 
-    let body = req.body;
-    let empresa = new Empresa({
+    var body = req.body;
+
+    var empresa = new Empresa({
         nombre: body.nombre,
         img: body.img,
         descripcion: body.descripcion,
-        usuario: req.usuario._id,
-        ubicacion: req.departamento._id,
-        sector: req.sector._id
+        usuario: req.usuario.Usuario._id,
+        direccion: body.direccion,
+        ciudad: body.ciudad,
+        sector: body.sector,
+        lat: body.lat,
+        log: body.log
     });
+    let direccion = body.direccion;
+    let ciudad;
 
-    empresa.save((err, EmpresaGuardado) => {
+    console.log(req.usuario.Usuario._id);
 
+    Ciudad.findById(body.ciudad, (err, ciudadDB) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'Error al crear Empresa',
-                errors: err
+                message: 'La ciudad no existe',
+                err
             });
         }
+        ciudad = ciudadDB.ciudad;
+        //Obtengo las cordenadas dependiendo de la dirreción 
+        geocoder.geocode(direccion + ' ' + ciudad)
+            .then(function(respuesta) {
+                empresa.lat = respuesta[0].latitude;
+                empresa.log = respuesta[0].longitude;
+                empresa.save((err, empresaGuardado) => {
 
-        res.status(201).json({
-            ok: true,
-            empresa: EmpresaGuardado
-        });
+                    if (err) {
+                        return res.status(400).json({
+                            ok: false,
+                            mensaje: 'Error al crear empresa',
+                            errors: err
+                        });
+                    }
+
+                    res.status(201).json({
+                        ok: true,
+                        empresa: empresaGuardado
+                    });
+
+
+                });
+
+            })
+            .catch(function(err) {
+                return res.status(404).json({
+                    ok: false,
+                    mensaje: 'No se encuentran las coordenadas de la dirección',
+                    errors: err
+                });
+            });
+
 
     });
+
+
+
+
 
 });
 
@@ -95,7 +177,9 @@ app.post('/', [verificaToken, verificarEmpresaRole], (req, res) => {
 app.put('/:id', [verificaToken, verificarEmpresaRole], (req, res) => {
     let id = req.params.id;
     let usuario = req.usuario._id;
-    let ubicacion = req.departamento._id;
+    let ubicacion = req.ubicaion._id;
+    let lat = req.lat;
+    let log = req.log;
     let sector = req.sector._id;
     let body = _.pick(req.body,
         'nombre',
@@ -103,7 +187,7 @@ app.put('/:id', [verificaToken, verificarEmpresaRole], (req, res) => {
         'img'
     );
 
-    Empresa.findByIdAndUpdate(id, usuario, ubicacion, sector, body, { new: true, runValidators: true }, (err, EmpresaDB) => {
+    Empresa.findByIdAndUpdate(id, usuario, ubicacion, lat, log, sector, body, { new: true, runValidators: true }, (err, EmpresaDB) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -126,7 +210,7 @@ app.put('/:id', [verificaToken, verificarEmpresaRole], (req, res) => {
 //==========================
 
 
-app.delete('/:id', [verificaToken, verificarEmpresaRole], function(req, res) {
+app.delete('/:id', [verificaToken, verificarAdminRole], function(req, res) {
 
     let id = req.params.id;
 

@@ -25,26 +25,25 @@ app.post('/', (req, res) => {
                 }
             });
         }
-
-
         if (!bcrypt.compareSync(body.password, UsuarioDB.password)) {
             return res.status(400).json({
                 ok: false,
-                err: {
-                    message: 'Usuario o contraseña incorrecto'
-                }
+                mensaje: 'Usuario o contraseña incorrecto',
+                errors: err
             });
         }
+
         //genero el token
         let token = jwt.sign({
                 Usuario: UsuarioDB
             },
             process.env.SEED, { expiresIn: process.env.CADUCIDAD_TOKEN });
 
-        res.json({
+        res.status(200).json({
             ok: true,
-            Usuario: UsuarioDB,
-            token
+            usuario: UsuarioDB,
+            token,
+            id: UsuarioDB._id
         });
     });
 

@@ -17,7 +17,7 @@ const { verificaToken, verificarAdminRole } = require('../middlewares/autenticac
 //==========================
 //Obtener todos los usuarios||
 //==========================
-app.get('/', verificaToken, (req, res) => {
+app.get('/', (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -53,10 +53,10 @@ app.get('/', verificaToken, (req, res) => {
 });
 
 //==========================
-//Crear usuario             ||
+//Crear usuario     , [verificaToken, verificarAdminRole]        ||
 //==========================
 
-app.post('/', [verificaToken, verificarAdminRole], (req, res) => {
+app.post('/', (req, res) => {
 
     let body = req.body;
     let usuario = new Usuario({
@@ -79,7 +79,8 @@ app.post('/', [verificaToken, verificarAdminRole], (req, res) => {
 
         res.status(201).json({
             ok: true,
-            usuario: usuarioGuardado
+            usuario: usuarioGuardado,
+            usuariotoken: req.usuario
         });
 
     });
