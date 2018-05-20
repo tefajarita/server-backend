@@ -73,15 +73,30 @@ let verificarEmpresaRole = (req, res, next) => {
 let verificarTokenUrl = (req, res, next) => {
     let token = req.query.token;
 
-    res.json({
-        token
-    })
+    jwt.verify(token, process.env.SEED, (err, decoded) => {
+
+        if (err) {
+            return res.status(401).json({
+                ok: false,
+                err: {
+                    message: 'Token no válido'
+                }
+            });
+        } else {
+            decoded = jwt.decode(token, { complete: true });
+            req.usuario = decoded.payload;
+            let usuario = req.usuario;
+            next();
+
+        }
+
+    });
 
 
 };
 module.exports = {
     verificaToken,
     verificarAdminRole,
-    verificarEmpresaRole
-
+    verificarEmpresaRole,
+    verificarTokenUrl
 }
