@@ -2,9 +2,6 @@
     "name": "backend-server",
     "version": "1.0.0",
     "description": "servidor backend de la aplicación de la bolsa de empleo",
-    "engines": {
-        "node": "10.0.0"
-    },
     "main": "index.js",
     "scripts": {
         "start": "node server/app.js",
@@ -14,6 +11,7 @@
         "type": "git",
         "url": "git+https://github.com/tefajarita/server-backend.git"
     },
+    "cacheDirectories": ["server/node_modules"],
     "keywords": [
         "bolsa"
     ],
@@ -25,10 +23,8 @@
         "body-parser": "^1.18.2",
         "express": "^4.16.3",
         "jsonwebtoken": "^8.2.1",
-        "mongodb": "^3.1.0-beta4",
         "mongoose": "^5.0.17",
         "mongoose-unique-validator": "^2.0.1",
-        "node-geocoder": "^3.22.0",
         "underscore": "^1.9.0"
     }
 }

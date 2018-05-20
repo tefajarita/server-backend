@@ -11,6 +11,7 @@
         "type": "git",
         "url": "git+https://github.com/tefajarita/server-backend.git"
     },
+    "cacheDirectories": ["server/node_modules"],
     "keywords": [
         "bolsa"
     ],
