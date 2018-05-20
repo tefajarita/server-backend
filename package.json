@@ -4,7 +4,8 @@
     "description": "servidor backend de la aplicación de la bolsa de empleo",
     "main": "index.js",
     "engines": {
-        "node": "10.0.0"
+        "node": "10.0.0",
+        "npm": "6.0.1"
     },
     "scripts": {
         "start": "node server/app.js",
